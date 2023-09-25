@@ -1,0 +1,20 @@
+select distinct ?s1 ?o where {
+{?s1 <http://dbpedia.org/property/artist> ?b.
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/MusicalWork>.
+?s1 <http://dbpedia.org/property/music> ?o.
+ }
+UNION
+{?s1 <http://dbpedia.org/property/artist> ?b.
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/MusicalWork>.
+?s1 <http://dbpedia.org/property/song> ?o .
+}
+UNION
+{?s1 <http://dbpedia.org/property/artist> ?b.
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/MusicalWork>.
+?s1 <http://dbpedia.org/property/lmusic> ?o .
+}
+} 
+

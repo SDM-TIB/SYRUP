@@ -1,0 +1,6 @@
+select distinct ?s1 ?o where {
+?s1 <http://dbpedia.org/ontology/musicBy> ?b.
+?s1 <http://dbpedia.org/property/name> ?o1.
+?s1 a <http://dbpedia.org/ontology/MusicalWork>.
+?s1 <http://dbpedia.org/ontology/award> ?o.
+ }

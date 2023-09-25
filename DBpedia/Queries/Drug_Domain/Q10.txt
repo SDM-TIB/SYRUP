@@ -1,0 +1,6 @@
+select distinct ?s1 ?o where {
+?s1 <http://dbpedia.org/property/name> ?b.
+?s1 <http://purl.org/dc/terms/subject> ?o1.
+?s1 a <http://dbpedia.org/ontology/Drug>.
+?s1 <http://dbpedia.org/property/medicinenet> ?o.
+ }

@@ -1,0 +1,6 @@
+select distinct ?s1 ?o where {
+?s1 <http://dbpedia.org/property/class> ?b.
+?s1 <http://dbpedia.org/property/component> ?o1.
+?s1 a <http://dbpedia.org/ontology/Drug>.
+?s1 <http://dbpedia.org/property/drugName> ?o.
+ }

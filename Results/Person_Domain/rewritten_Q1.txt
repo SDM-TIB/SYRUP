@@ -1,0 +1,35 @@
+select distinct ?s1 ?o where{ {
+?s1 <http://dbpedia.org/property/birthDate> ?b.
+?s1 <http://dbpedia.org/property/caption> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/child> ?o1.
+ }
+
+union
+{
+?s1 <http://dbpedia.org/property/birthDate> ?b.
+?s1 <http://dbpedia.org/property/caption> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/spouse> ?o1.
+ }
+union
+{
+?s1 <http://dbpedia.org/property/birthDate> ?b.
+?s1 <http://dbpedia.org/property/caption> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/relative> ?o1.
+ }
+union
+{
+?s1 <http://dbpedia.org/property/birthDate> ?b.
+?s1 <http://dbpedia.org/property/caption> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/parent> ?o1.
+ }
+union
+{
+?s1 <http://dbpedia.org/property/birthDate> ?b.
+?s1 <http://dbpedia.org/property/caption> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/relatives> ?o1.
+ }}

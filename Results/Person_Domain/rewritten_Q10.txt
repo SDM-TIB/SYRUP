@@ -1,0 +1,44 @@
+select distinct ?s1 ?o where {
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/members> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/contributingMembers> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/teams> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/team> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/connectedmembers> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/originalMembers> ?o1.
+}
+UNION
+{
+?s1 <http://dbpedia.org/property/name> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/notableMembers> ?o1.
+}
+
+} 

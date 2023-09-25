@@ -1,0 +1,31 @@
+select distinct ?s1 ?o where {
+{?s1 <http://dbpedia.org/property/author> ?b.
+?s1 <http://dbpedia.org/property/date> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/name> ?o1.
+}
+UNION
+{?s1 <http://dbpedia.org/property/author> ?b.
+?s1 <http://dbpedia.org/property/date> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/birthName> ?o1.
+}
+UNION
+{?s1 <http://dbpedia.org/property/author> ?b.
+?s1 <http://dbpedia.org/property/date> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/ontology/birthName> ?o1.
+}
+UNION
+{?s1 <http://dbpedia.org/property/author> ?b.
+?s1 <http://dbpedia.org/property/date> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/knownAs> ?o1.
+}
+UNION
+{?s1 <http://dbpedia.org/property/author> ?b.
+?s1 <http://dbpedia.org/property/date> ?o.
+?s1 a <http://dbpedia.org/ontology/Person>.
+?s1 <http://dbpedia.org/property/sname> ?o1.
+}
+} 

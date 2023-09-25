@@ -1,0 +1,6 @@
+select distinct ?s1 ?o where {
+?s1 <http://dbpedia.org/ontology/wikiPageID> ?b.
+?s1 <http://dbpedia.org/property/contact> ?o.
+?s1 a <http://dbpedia.org/ontology/Sport>.
+?s1 <http://dbpedia.org/property/venue> ?o1.
+ }

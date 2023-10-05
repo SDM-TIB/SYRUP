@@ -300,13 +300,34 @@ def calc_precision_recall(classified_synonyms_set, ground_truth_synonyms_set):
 
 
 def precision(precision):
-    precision = pd.read_csv("experiments/DBpedia_rewriting/Precision.csv", index_col=0)
-    plt.figure(figsize=(10, 6))  
-    plt.boxplot(precision)  
     
-    plt.xlabel('Domains')   
-    plt.ylabel('Avg Values of Precision')  
-    plt.xticks(range(1, len(precision.columns) + 1), precision.columns, rotation=45, ha='right')
+    precision = pd.read_csv(r'experiments/DBpedia_rewriting/Precision.csv')
+    plt.figure(figsize=(10, 6))  
+   
+
+    df = precision[precision['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+
+    orders = ['SYRUP-Answers','Original-Answers']
+    
+
+    palette = [ 'green', 'red']
+
+    sns.violinplot(y='num1', x='Domains', 
+                     data=df, 
+                     palette=palette,
+                     hue_order=orders, hue="Methods", scale='width')
+
+  
+
+
+
+    sns.stripplot(x="Domains", y="num1", data=df, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
+    
+    plt.xlabel('Domains', fontsize=15)   
+    plt.ylabel('Avg Values of Precision', fontsize=15)
+    plt.ylim(-0.5, 1.5)  
+    plt.xticks(fontsize=15)
+
     plt.tight_layout() 
 
     # plt.title('Precision')
@@ -316,16 +337,31 @@ precision(precision)
 
 
 def recall(recall):
-    recall = pd.read_csv("experiments/DBpedia_rewriting/Recall.csv", index_col=0)
+    recall = pd.read_csv(r'experiments/DBpedia_rewriting/Recall.csv')
     
     
     
     plt.figure(figsize=(10, 6))  
-    plt.boxplot(recall)  
     
+    df1 = precision[precision['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+
+    orders = ['SYRUP-Answers','Original-Answers']
+    
+
+    palette = [ 'green', 'red']
+
+    sns.violinplot(y='num1', x='Domains', 
+                     data=df1, 
+                     palette=palette,
+                     hue_order=orders, hue="Methods", scale='width')
+
+
+
+    sns.stripplot(x="Domains", y="num1", data=df1, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
     plt.xlabel('Domains')   
-    plt.ylabel('Avg Values of Recall')  
-    plt.xticks(range(1, len(recall.columns) + 1), recall.columns, rotation=45, ha='right')
+    plt.ylabel('Avg Values of Recall')
+    plt.ylim(-0.5, 1.5)  
+   
     plt.tight_layout() 
 
     # plt.title('Recall')

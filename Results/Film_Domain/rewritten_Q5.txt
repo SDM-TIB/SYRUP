@@ -5,28 +5,29 @@ select distinct ?s1 ?o where {
 ?s1 a <http://dbpedia.org/ontology/Film>.
 ?s1 <http://dbpedia.org/property/filename> ?o.
  }
-
-union
-{
-?s1 <http://dbpedia.org/property/gross> ?b.
+UNION
+{?s1 <http://dbpedia.org/property/gross> ?b.
 ?s1 <http://dbpedia.org/property/editing> ?o1.
 ?s1 a <http://dbpedia.org/ontology/Film>.
-?s1 <http://dbpedia.org/property/works> ?o.
- }
-
-union
-{
-?s1 <http://dbpedia.org/property/gross> ?b.
-?s1 <http://dbpedia.org/property/editing> ?o1.
-?s1 a <http://dbpedia.org/ontology/Film>.
-?s1 <http://dbpedia.org/property/films> ?o.
- }
-union
-{
-?s1 <http://dbpedia.org/property/gross> ?b.
-?s1 <http://dbpedia.org/property/editing> ?o1.
-?s1 a <http://dbpedia.org/ontology/Film>.
-?s1 <http://dbpedia.org/ontology/title> ?o.
- }
+?s1 <http://dbpedia.org/property/caption> ?o .
 }
+UNION
+{?s1 <http://dbpedia.org/property/gross> ?b.
+?s1 <http://dbpedia.org/property/editing> ?o1.
+?s1 a <http://dbpedia.org/ontology/Film>.
+?s1 <http://dbpedia.org/property/name> ?o .
+}
+UNION
+{?s1 <http://dbpedia.org/property/gross> ?b.
+?s1 <http://dbpedia.org/property/editing> ?o1.
+?s1 a <http://dbpedia.org/ontology/Film>.
+?s1 <http://dbpedia.org/ontology/title> ?o .
+}
+UNION
+{?s1 <http://dbpedia.org/property/gross> ?b.
+?s1 <http://dbpedia.org/property/editing> ?o1.
+?s1 a <http://dbpedia.org/ontology/Film>.
+?s1 <http://dbpedia.org/property/label> ?o .
+}
+} 
 

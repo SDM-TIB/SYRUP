@@ -14,6 +14,12 @@ UNION
 {?s1 <http://dbpedia.org/ontology/wikiPageWikiLink> ?b.
 ?s1 <http://dbpedia.org/property/type> ?o1.
 ?s1 a <http://dbpedia.org/ontology/HistoricPlace>.
+?s1 <http://dbpedia.org/property/location> ?o.
+}
+UNION
+{?s1 <http://dbpedia.org/ontology/wikiPageWikiLink> ?b.
+?s1 <http://dbpedia.org/property/type> ?o1.
+?s1 a <http://dbpedia.org/ontology/HistoricPlace>.
 ?s1 <http://dbpedia.org/property/country> ?o.
 }
 UNION

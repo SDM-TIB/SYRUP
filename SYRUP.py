@@ -343,7 +343,7 @@ def recall(recall):
     
     plt.figure(figsize=(10, 6))  
     
-    df1 = precision[precision['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+    df1 = recall[recall['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
 
     orders = ['SYRUP-Answers','Original-Answers']
     

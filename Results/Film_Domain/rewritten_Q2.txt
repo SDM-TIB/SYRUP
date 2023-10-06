@@ -14,12 +14,6 @@ UNION
 {?s1 <http://dbpedia.org/property/title> ?b.
 ?s1 <http://dbpedia.org/property/name> ?o1.
 ?s1 a <http://dbpedia.org/ontology/Film>.
-?s1 <http://dbpedia.org/ontology/director> ?o .
-}
-UNION
-{?s1 <http://dbpedia.org/property/title> ?b.
-?s1 <http://dbpedia.org/property/name> ?o1.
-?s1 a <http://dbpedia.org/ontology/Film>.
 ?s1 <http://dbpedia.org/property/birthDate> ?o .
 }
 } 

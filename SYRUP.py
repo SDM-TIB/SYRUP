@@ -370,6 +370,42 @@ def recall(recall):
     
 recall(recall)
 
+def NumberAnswers(NumberAnswers):
+# Read the CSV files into pandas DataFrames
+    df1 = pd.read_csv('experiments/DBpedia_rewriting/NumberQueriesOriginal.csv')  
+    df2 = pd.read_csv('experiments/DBpedia_rewriting/NumberQueriesSYRUP.csv')  
+
+    
+    columns_to_plot = ['Film', 'Sport', 'Person', 'Drug', 'Music', 'History']  
+
+    # Iterate over each pair of columns and create a plot
+    for column in columns_to_plot:
+        df1[column] = df1[column].astype(float)
+        df2[column] = df2[column].astype(float)
+
+        # Normalize the data
+        total = df1[column] + df2[column]
+        df1['Normalized'] = df1[column] / total
+        df2['Normalized'] = df2[column] / total
+
+        
+        plt.figure(figsize=(8, 6))
+        plt.bar(df1['Queries'], df1['Normalized'], label='Original Answers', alpha=0.7)
+        plt.bar(df1['Queries'], df2['Normalized'], bottom=df1['Normalized'], label='SYRUP Answers', alpha=0.7)
+
+        
+        plt.xlabel('Queries', fontsize=15)
+        plt.ylabel('#Answers Normalized', fontsize=15)
+        # plt.title(f'Stacked Bar Plot for {column} (Normalized)')
+        plt.legend(fontsize=20)
+
+        
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(f'experiments/stacked_bar_{column}.png')
+
+NumberAnswers(NumberAnswers) 
+
 
 
 

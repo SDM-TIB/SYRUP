@@ -1,4 +1,4 @@
-select distinct ?s1 ?o where {
+SELECT (count(DISTINCT ?s1)) where {
 {?s1 <http://dbpedia.org/ontology/spouse> ?b.
 ?s1 a <http://dbpedia.org/ontology/Person>.
 ?s1 <http://dbpedia.org/ontology/father> ?o.
@@ -15,3 +15,4 @@ UNION
 ?s1 <http://dbpedia.org/property/married> ?o.
 }
 } 
+ 

@@ -101,6 +101,20 @@ def plot_evaluation(file_name, xlabel, ylabel, title, \
         plt.plot(recall[min_idx:], precision[min_idx:], \
                 color='blue', linestyle='solid', label = "TransH")
 
+    if "transe" in values_by_model:
+        precision = get_precision(values_by_model["transe"])
+        recall = get_recall(values_by_model["transe"])
+        if gaussian_enable:
+            precision = gaussian_filter1d(precision, sigma=gaussian_sigma)
+        if interpolation_enable:
+            new_recall = np.linspace(min(recall), max(recall), interpolation_segments)
+            f = UnivariateSpline(recall, precision, k=interpolation_order)
+            precision = f(new_recall)
+            recall = new_recall
+        min_idx = len(precision) - min(get_valid_num(precision), get_valid_num(recall))
+        plt.plot(recall[min_idx:], precision[min_idx:], \
+                color='gray', linestyle='solid', label = "TransE")    
+
     if "complex" in values_by_model:
         precision = get_precision(values_by_model["complex"])
         recall = get_recall(values_by_model["complex"])
@@ -173,11 +187,13 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
     basename = os.path.basename(experiment)
     transd_fn = experiment + "_transd"
     transh_fn = experiment + "_transh"
+    transe_fn = experiment + "_transe"
     complex_fn = experiment + "_complex"
     NumEmb_fn = experiment + "_NumEmb"
     syrup_fn = experiment + "_syrup"
     transd = os.path.exists(transd_fn)
     transh = os.path.exists(transh_fn)
+    transe = os.path.exists(transe_fn)
     complex = os.path.exists(complex_fn)
     NumEmb = os.path.exists(NumEmb_fn)
     syrup = os.path.exists(syrup_fn)
@@ -186,6 +202,8 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
             "evaluation", "evaluation_l1.txt")) if transd else None
     transh_values = read_evaluation(os.path.join(transh_fn, \
             "evaluation", "evaluation_l1.txt")) if transh else None
+    transe_values = read_evaluation(os.path.join(transe_fn, \
+            "evaluation", "evaluation_l1.txt")) if transe else None
     complex_values = read_evaluation(os.path.join(complex_fn, \
             "evaluation", "evaluation_l1.txt")) if complex else None
     NumEmb_values = read_evaluation(os.path.join(NumEmb_fn, \
@@ -200,6 +218,8 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
         values_by_model["transd"] = transd_values
     if transh:
         values_by_model["transh"] = transh_values
+    if transe:
+        values_by_model["transe"] = transe_values    
     if complex:
         values_by_model["complex"] = complex_values    
     if NumEmb:

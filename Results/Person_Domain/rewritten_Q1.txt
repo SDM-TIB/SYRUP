@@ -10,26 +10,12 @@ union
 ?s1 <http://dbpedia.org/property/birthDate> ?b.
 ?s1 <http://dbpedia.org/property/caption> ?o.
 ?s1 a <http://dbpedia.org/ontology/Person>.
-?s1 <http://dbpedia.org/ontology/spouse> ?o1.
+?o1 <http://dbpedia.org/ontology/parent> ?s1 .
  }
 union
 {
 ?s1 <http://dbpedia.org/property/birthDate> ?b.
 ?s1 <http://dbpedia.org/property/caption> ?o.
 ?s1 a <http://dbpedia.org/ontology/Person>.
-?s1 <http://dbpedia.org/property/relative> ?o1.
- }
-union
-{
-?s1 <http://dbpedia.org/property/birthDate> ?b.
-?s1 <http://dbpedia.org/property/caption> ?o.
-?s1 a <http://dbpedia.org/ontology/Person>.
-?s1 <http://dbpedia.org/ontology/parent> ?o1.
- }
-union
-{
-?s1 <http://dbpedia.org/property/birthDate> ?b.
-?s1 <http://dbpedia.org/property/caption> ?o.
-?s1 a <http://dbpedia.org/ontology/Person>.
-?s1 <http://dbpedia.org/ontology/relatives> ?o1.
+?s1  <http://dbpedia.org/ontology/successor> ?o1.
  }}

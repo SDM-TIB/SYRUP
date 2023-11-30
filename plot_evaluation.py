@@ -210,7 +210,7 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
             "evaluation", "evaluation_l1.txt")) if NumEmb else None
     syrup_values = read_evaluation(os.path.join(syrup_fn, \
             "evaluation", "evaluation_l1.txt")) if syrup else None
-    file_name = os.path.join(dirname, basename + "_l1.pdf")
+    file_name = os.path.join(dirname, "PrecisionRecallEval.pdf")
     title = basename + ": Evaluation (L1-norm distance)" \
             if print_title else None
     values_by_model = {}

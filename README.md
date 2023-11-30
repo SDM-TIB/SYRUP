@@ -6,9 +6,7 @@ SYRUP is a two-fold approach to detect synonym predicates and alternative defini
 ![SYRUP example](/images/MotivatingExample.png?raw=true "SYRUP example")
 
 
-The evaluation of SYRUP on 60 SPARQL queries over six different domains of DBpedia suggests that SYRUP improves the answer completeness and correctness by achieving the accuracy from 0.73 to 0.95. Expanding queries by synonym predicates and alternative definitions discovered from association patterns is particularly efficient whenever it is performed with respect to the domains, e.g., Film and Music where predicates have more synonyms.
 
-![SYRUP evaluation](/images/PrecisionRecallEval.png?raw=true "SYRUP evaluation")
 
 
 ### Building SYRUP from Source
@@ -16,7 +14,9 @@ Clone the repository
 ```git
 git clone git@github.com:SDM-TIB/SYRUP.git
 ```
-
+```python
+pip install -r requirements.txt
+```
 Configuration for executing
 ```json
 {
@@ -40,3 +40,14 @@ The proposed approach is a a knowledge graph-agnostic approach. Therefore, apart
   "query": "Q1"
 }
 ```
+```python
+python SYRUP.py 
+```
+### Plots demonstrating
+```python
+python -m plot_evaluation -e experiments/DBpedia
+```
+
+The evaluation of SYRUP on 60 SPARQL queries over six different domains of DBpedia suggests that SYRUP improves the answer completeness and correctness by achieving the accuracy from 0.73 to 0.95. Expanding queries by synonym predicates and alternative definitions discovered from association patterns is particularly efficient whenever it is performed with respect to the domains, e.g., Film and Music where predicates have more synonyms.
+
+![SYRUP evaluation](/images/PrecisionRecallEval.png?raw=true "SYRUP evaluation")

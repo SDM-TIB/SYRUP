@@ -203,8 +203,8 @@ if __name__ == '__main__':
         query = f.read()
     
     userqueryPref = prefix + userquery
-    atom1Pref = atom1.replace(preB1, f'<{prefix}{preB1}>')
-    atom2Pref = atom2.replace(preB2, f'<{prefix}{preB2}>')
+    atom1Pref = atom1.replace(preB1, f'<{prefix}{preB1}>').replace('ex:', '')
+    atom2Pref = atom2.replace(preB2, f'<{prefix}{preB2}>').replace('ex:', '')
 
     # a = query_expansion(query, userqueryPref, add_synonym_predicates)
     aa = query_rewriting(query, userqueryPref, atom1Pref, atom2Pref)

@@ -85,9 +85,11 @@ def colectRules(file, user_predicate):
     global first_preAtom, second_preAtom, final_preds
     rules = pd.read_csv(file)
     q = f"""SELECT * FROM rules WHERE Body LIKE '%?%  %  ?%  ?%  %  ?%   %' AND Head LIKE '%{user_predicate}%' ORDER BY PCA_Confidence DESC"""
+   
 
     rule = sqldf(q, locals())
     final_preds = []
+
 
     for idx, item in rule.iterrows():
         sub_dataframe = pd.DataFrame([item])
@@ -107,65 +109,120 @@ def colectRules(file, user_predicate):
         final_preds.append(first_preAtom)
         final_preds.append(second_preAtom)
 
-    return final_preds[0], final_preds[1]    
+
+    return final_preds[0], final_preds[1]
+
+            
+def replace_rule_instances(file, query, user_predicate):
+    global first_preAtom, second_preAtom, final_preds
+    rules = pd.read_csv(file)
+    q = f"""SELECT * FROM rules WHERE Body LIKE '%?%  %  ?%  ?%  %  ?%   %' AND Head LIKE '%{user_predicate}%' ORDER BY PCA_Confidence DESC"""
+   
+    rule = sqldf(q, locals())
+    final_preds = []
+
+    for idx, item in rule.iterrows():
+        sub_dataframe = pd.DataFrame([item])
+        
+        for i, val in sub_dataframe.iterrows():
+            body = val['Body']
+            headAtom = val['Head']
+            fun_var = val['Functional_variable']
+            preds = body.split()
+            pattern = re.compile(r'^\w+$')
+            top_list = [item if pattern.match(item) else item for item in preds]
+
+     
+            split_index = 3
+            first_preAtom = top_list[:split_index]
+            second_preAtom = top_list[split_index:]
+
+            first_preBody = ' '.join(first_preAtom)
+            second_preBody = ' '.join(second_preAtom)
             
 
+            
+        final_preds.append(first_preBody)
+        final_preds.append(second_preBody)
+    firstAtom = []
+    secondAtom = []
+    for i,k in zip(final_preds[0::2], final_preds[1::2]):
+        firstAtom.append(str(i))
+        secondAtom.append(str(k))  
+   
+    with open(query, 'r') as file:
+        lines = file.read()
+        firstVar = re.findall('.*<', lines)[-1][0:-1]
+        secondVar = re.findall('>.*', lines)[-1][2:-1]
+
+    firstAtoms = [string.replace('?a', firstVar).replace('?b', secondVar) for string in firstAtom]
+    secondAtoms = [string.replace('?a', firstVar).replace('?b', secondVar) for string in secondAtom]
+    headAtom = headAtom.replace('?a', firstVar).replace('?b', secondVar)
+
+    return firstAtoms[0], secondAtoms[0], headAtom
 
 # https://labs.tib.eu/sdm/wikidata-09-23/sparql
 # https://labs.tib.eu/sdm/dbpedia/sparql
 # ?b  parent  ?f  ?f  spouse  ?a   ,?a  child  ?b
+
 # compute PCA
-# PREFIX dbo: <http://dbpedia.org/ontology/>
+
+# PREFIX ex: <http://dbpedia.org/ontology/>
 # SELECT (xsd:float(?Support)/xsd:float(?PCABodySize) AS ?PCA) 
 # WHERE {
 # {SELECT (COUNT(DISTINCT *) AS ?Support) WHERE {
 #                   SELECT ?X ?Y  WHERE {
-#                                  ?F dbo:spouse ?X.
-#                                  ?Y dbo:parent ?F.
-#                                  ?X dbo:child ?Y. } }} 
+#                                  ?F ex:spouse ?X.
+#                                  ?Y ex:parent ?F.
+#                                  ?X ex:child ?Y. } }} 
 # {SELECT (COUNT(DISTINCT *) AS ?PCABodySize) WHERE {
 #                   SELECT ?X ?Y  WHERE {
-#                                     ?F dbo:spouse ?X.                                   
-#                                     ?Y dbo:parent ?F.
-#                                     ?X dbo:child ?Y1.}}}}
+#                                     ?F ex:spouse ?X.                                   
+#                                     ?Y ex:parent ?F.
+#                                     ?X ex:child ?Y1.}}}}
+
 
 # compute Modified-PCA
-# PREFIX dbo: <http://dbpedia.org/ontology/>
+
+# PREFIX ex: <http://dbpedia.org/ontology/>
 # SELECT (xsd:float(?Support))/MAX(?PCA) AS ?modifiedPCA WHERE {{
 # SELECT (COUNT(DISTINCT *) AS ?Support) WHERE { 
-# SELECT ?X ?Y WHERE { ?F dbo:spouse ?X. ?Y dbo:parent ?F. ?X dbo:child ?Y. }}} 
+# SELECT ?X ?Y WHERE { ?F ex:spouse ?X. ?Y ex:parent ?F. ?X ex:child ?Y. }}} 
 # { {SELECT (COUNT(DISTINCT *) AS ?PCA) WHERE { 
-# SELECT ?X ?Y WHERE { ?F dbo:spouse ?X. ?Y dbo:parent ?F. ?X dbo:child ?Y1. }}}}
+# SELECT ?X ?Y WHERE { ?F ex:spouse ?X. ?Y ex:parent ?F. ?X ex:child ?Y1. }}}}
 # UNION 
 # { {SELECT (COUNT(DISTINCT *) AS ?PCA) WHERE { 
-# SELECT ?X ?Y WHERE { ?F dbo:spouse ?X. ?Y1 dbo:parent ?F. ?X dbo:child ?Y. }}}
+# SELECT ?X ?Y WHERE { ?F ex:spouse ?X. ?Y1 ex:parent ?F. ?X ex:child ?Y. }}}
 # }}
 
 def query_generationMdifiedPCA(endpoint, prefix, pre1, pre2, pre3):
+    pattern = r'\?([a-zA-Z])1'
+    elemx1 = re.sub(pattern, r'?\g<1>11', pre2)
+       
     # Define SPARQL query
     sparql_query_template = """
-    PREFIX dbo: <http://dbpedia.org/ontology/>
+    PREFIX ex: <""" + prefix + """>
     SELECT (xsd:float(?Support))/MAX(?PCA) AS ?modifiedPCA WHERE {
       {
         SELECT (COUNT(DISTINCT *) AS ?Support) WHERE {
-          SELECT ?X ?Y WHERE {?X dbo:body_var2 ?Y.
-          ?Y dbo:body_var1 ?X.
-          ?X dbo:head_var ?Y.}
+          SELECT ?s1 ?o1 WHERE {body_var2.
+          body_var1.
+          ?s1 ex:head_var ?o1.}
         }
       }
       {
         {SELECT (COUNT(DISTINCT *) AS ?PCA) WHERE {
-          SELECT ?X ?Y WHERE {?X dbo:body_var2 ?Y.
-          ?Y dbo:body_var1 ?X.
-          ?X dbo:head_var ?Y1.}}
+          SELECT ?s1 ?o1 WHERE {body_var2.
+          body_var1.
+          ?s1 ex:head_var ?o11.}}
         }
       }
       UNION
       {
         {SELECT (COUNT(DISTINCT *) AS ?PCA) WHERE {
-          SELECT ?X ?Y WHERE {?X dbo:body_var2 ?Y.
-          ?Y1 dbo:body_var1 ?X.
-          ?X dbo:head_var ?Y.}}
+          SELECT ?s1 ?o1 WHERE {body_var2.
+          body_varX1.
+          ?s1 ex:head_var ?o1.}}
         }
       }
     }
@@ -174,8 +231,8 @@ def query_generationMdifiedPCA(endpoint, prefix, pre1, pre2, pre3):
     
     # Set the variable values to bind to the placeholders
     # Replace the placeholders with the variable values
-    sparql_query = sparql_query_template.replace("head_var", pre1).replace("body_var1", pre2).replace("body_var2", pre3)
-        
+    sparql_query = sparql_query_template.replace("head_var", pre1).replace("body_var1", pre2).replace("body_varX1", elemx1).replace("body_var2", pre3)
+    print(sparql_query)
     sparql = SPARQLWrapper(endpoint)
     sparql.setQuery(sparql_query)
     sparql.setReturnFormat(JSON)
@@ -188,6 +245,10 @@ def query_generationMdifiedPCA(endpoint, prefix, pre1, pre2, pre3):
         print("The value of ModifiedPCA:", modifiedPCA)
 
     return modifiedPCA
+
+
+
+
 
 # for Numeric-Embedding technique
 # def similarity_calculation(vectors):
@@ -239,28 +300,58 @@ def highest_similar_predicates(prefix, pre1, num=4):
         
 
 
-def query_expansion(query, predicate_to_replace, predicates_to_add=[]):
+
+# def query_expansion(query, predicate_to_replace, predicates_to_add=[]):
+#     if type(query) is not str:
+#         raise TypeError('query must be string!')
+    
+#     if predicate_to_replace[0] != '<':
+#         predicate_to_replace = '<' + predicate_to_replace + '>'
+#     for i in range(len(predicates_to_add)):
+#         predicates_to_add[i] = '<' + predicates_to_add[i] + '>'
+#     new_query = query
+    
+#     part_within_braces = re.findall('\{.*\}', query, flags=re.DOTALL)[0]
+#     for predicate in predicates_to_add:
+#         new_query = new_query + '\nunion\n' + part_within_braces.replace(predicate_to_replace, predicate)
+       
+#     slice_point = [match for match in re.finditer('\{', new_query)][0].start()-1
+    
+#     new_query = new_query[:slice_point] + '{' + new_query[slice_point:] + '}'
+    
+
+#     return new_query
+
+
+def query_expansion2(query, predicate_to_replace, atom1, atom2):
     if type(query) is not str:
         raise TypeError('query must be string!')
     
     if predicate_to_replace[0] != '<':
         predicate_to_replace = '<' + predicate_to_replace + '>'
-    for i in range(len(predicates_to_add)):
-        predicates_to_add[i] = '<' + predicates_to_add[i] + '>'
+
     new_query = query
     
+    atoms = []
+    atoms.append(atom1Pref)
+    atoms.append(atom2Pref)
+
     part_within_braces = re.findall('\{.*\}', query, flags=re.DOTALL)[0]
-    for predicate in predicates_to_add:
+    
+    firstVar = re.findall('.*<', query)[-1][0:-1]
+    secondVar = re.findall('>.*', query)[-1][2:-1]
+    
+    # predicate_to_replace = firstVar + ' ' + predicate_to_replace + ' ' + secondVar
+    predicate_to_replace = '?s1 '+ predicate_to_replace + ' ?o1'
+    
+    for predicate in atoms:
         new_query = new_query + '\nunion\n' + part_within_braces.replace(predicate_to_replace, predicate)
-       
     slice_point = [match for match in re.finditer('\{', new_query)][0].start()-1
     
     new_query = new_query[:slice_point] + '{' + new_query[slice_point:] + '}'
     
 
     return new_query
-
-
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -270,16 +361,23 @@ if __name__ == '__main__':
     # sim_mat = similarity_calculation(vectors)
     # sim_mat_to_csv(sim_mat, predicates)
     preB1, preB2 = colectRules(rulesfile, userquery)
-    query_generationMdifiedPCA(endpoint, prefix, userquery, preB1, preB2)
-
+    
+    atom1, atom2, atomHead = replace_rule_instances(rulesfile, query, userquery)
+    query_generationMdifiedPCA(endpoint, prefix, userquery, atom1, atom2)
+    
     with open(query, 'rt') as f:
         query = f.read()
     add_synonym_predicates = highest_similar_predicates(prefix, userquery)
     userqueryPref = prefix + userquery
-    a = query_expansion(query, userqueryPref, add_synonym_predicates)
-
+    atom1Pref = atom1.replace(preB1, f'<{prefix}{preB1}>').replace('ex:', '')
+    atom2Pref = atom2.replace(preB2, f'<{prefix}{preB2}>').replace('ex:', '')
+    
+    
+    
+    # a = query_expansion(query, userqueryPref, add_synonym_predicates)
+    aa = query_expansion2(query, userqueryPref, atom1Pref, atom2Pref)
     with open(path_result , 'wt') as f:
-        f.write(a)
+        f.write(aa)
 
     end_time = time.time()
     execution_time = end_time - start_time
@@ -299,81 +397,83 @@ def calc_precision_recall(classified_synonyms_set, ground_truth_synonyms_set):
     return precision, recall
 
 
-def precision(precision):
+# def precision(precision):
+#     # precision = pd.read_csv("experiments/DBpedia_rewriting/Precision.csv", index_col=0)
+#     precision = pd.read_csv(r'experiments/DBpedia_rewriting/PrecisionViol.csv')
+#     plt.figure(figsize=(10, 6))  
+#     # plt.boxplot(precision)  
+
+#     df = precision[precision['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+
+#     orders = ['SYRUP-Answers','Original-Answers']
     
-    precision = pd.read_csv(r'experiments/DBpedia_rewriting/Precision.csv')
-    plt.figure(figsize=(10, 6))  
-   
 
-    df = precision[precision['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+#     palette = [ 'green', 'red']
 
-    orders = ['SYRUP-Answers','Original-Answers']
-    
-
-    palette = [ 'green', 'red']
-
-    sns.violinplot(y='num1', x='Domains', 
-                     data=df, 
-                     palette=palette,
-                     hue_order=orders, hue="Methods", scale='width')
+#     sns.violinplot(y='num1', x='Domains', 
+#                      data=df, 
+#                      palette=palette,
+#                      hue_order=orders, hue="Methods", scale='width')
 
   
 
 
 
-    sns.stripplot(x="Domains", y="num1", data=df, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
+#     sns.stripplot(x="Domains", y="num1", data=df, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
     
-    plt.xlabel('Domains', fontsize=15)   
-    plt.ylabel('Avg Values of Precision', fontsize=15)
-    plt.ylim(-0.5, 1.5)  
-    plt.xticks(fontsize=15)
+#     plt.xlabel('Domains', fontsize=15)   
+#     plt.ylabel('Avg Values of Precision', fontsize=15)
+#     plt.ylim(-0.5, 1.5)  
+#     plt.xticks(fontsize=15)
+#     # plt.xticks(range(1, len(precision.columns) + 1), precision.columns, rotation=45, ha='right')
+#     plt.tight_layout() 
 
-    plt.tight_layout() 
-
-    # plt.title('Precision')
-    plt.savefig('experiments/Precision.png', dpi=100)
-    plt.show()   
-precision(precision)
+#     # plt.title('Precision')
+#     plt.savefig('experiments/PrecisionViol.png', dpi=100)
+#     plt.show()   
+# precision(precision)
 
 
-def recall(recall):
-    recall = pd.read_csv(r'experiments/DBpedia_rewriting/Recall.csv')
+# def recall(recall):
+#     recall = pd.read_csv(r'experiments/DBpedia_rewriting/RecallViol.csv')
     
     
     
-    plt.figure(figsize=(10, 6))  
+#     plt.figure(figsize=(10, 6))  
+#     # plt.boxplot(recall)  
+#     df1 = recall[recall['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
+
+#     orders = ['SYRUP-Answers','Original-Answers']
     
-    df1 = recall[recall['Methods'].isin(['SYRUP-Answers','Original-Answers'])]
 
-    orders = ['SYRUP-Answers','Original-Answers']
+#     palette = [ 'green', 'red']
+
+#     sns.violinplot(y='num1', x='Domains', 
+#                      data=df1, 
+#                      palette=palette,
+#                      hue_order=orders, hue="Methods", scale='width')
+
+
+
+#     sns.stripplot(x="Domains", y="num1", data=df1, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
+#     plt.xlabel('Domains')   
+#     plt.ylabel('Avg Values of Recall')
+#     plt.ylim(-0.5, 2)  
+#    #plt.xticks(range(1, len(recall.columns) + 1), recall.columns, rotation=45, ha='right')
+#     plt.tight_layout() 
+
+#     # plt.title('Recall')
+#     plt.savefig('experiments/RecallViol.png', dpi=100)
+#     plt.show()
     
-
-    palette = [ 'green', 'red']
-
-    sns.violinplot(y='num1', x='Domains', 
-                     data=df1, 
-                     palette=palette,
-                     hue_order=orders, hue="Methods", scale='width')
+# recall(recall)
 
 
-
-    sns.stripplot(x="Domains", y="num1", data=df1, jitter=True, zorder=1, color='deepskyblue', alpha=0.5)
-    plt.xlabel('Domains')   
-    plt.ylabel('Avg Values of Recall')
-    plt.ylim(-0.5, 1.5)  
-   
-    plt.tight_layout() 
-
-    # plt.title('Recall')
-    plt.savefig('experiments/Recall.png', dpi=100)
-    plt.show()
-    
-recall(recall)
 
 def NumberAnswers(NumberAnswers):
 # Read the CSV files into pandas DataFrames
     df1 = pd.read_csv('experiments/DBpedia_rewriting/NumberQueriesOriginal.csv')  
-    df2 = pd.read_csv('experiments/DBpedia_rewriting/NumberQueriesSYRUP.csv')  
+    df2 = pd.read_csv('experiments/DBpedia_rewriting/NumberQueriesSYRUPdiff.csv')  
 
     
     columns_to_plot = ['Film', 'Sport', 'Person', 'Drug', 'Music', 'History']  
@@ -383,8 +483,13 @@ def NumberAnswers(NumberAnswers):
         df1[column] = df1[column].astype(float)
         df2[column] = df2[column].astype(float)
 
+        df1[column].fillna(0, inplace=True)
+        df2[column].fillna(0, inplace=True)
+
         # Normalize the data
         total = df1[column] + df2[column]
+
+
         df1['Normalized'] = df1[column] / total
         df2['Normalized'] = df2[column] / total
 
@@ -394,8 +499,8 @@ def NumberAnswers(NumberAnswers):
         plt.bar(df1['Queries'], df2['Normalized'], bottom=df1['Normalized'], label='SYRUP Answers', alpha=0.7)
 
         
-        plt.xlabel('Queries', fontsize=15)
-        plt.ylabel('#Answers Normalized', fontsize=15)
+        plt.xlabel('Queries', fontsize=20)
+        plt.ylabel('#Normalized Answers', fontsize=20)
         # plt.title(f'Stacked Bar Plot for {column} (Normalized)')
         plt.legend(fontsize=20)
 
@@ -405,10 +510,6 @@ def NumberAnswers(NumberAnswers):
         plt.savefig(f'experiments/stacked_bar_{column}.png')
 
 NumberAnswers(NumberAnswers) 
-
-
-
-
 
 
 

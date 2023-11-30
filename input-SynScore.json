@@ -3,5 +3,5 @@
   "endpoint": "https://labs.tib.eu/sdm/family_kg/sparql",
   "prefix": "http://family.org/",
   "rules_file": "Family_AMIE_Rules.csv",
-  "predicate": "fam:husband"
+  "predicate": "ex:husband"
 }

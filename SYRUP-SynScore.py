@@ -97,9 +97,10 @@ def query_generationMdifiedPCA(endpoint, prefix, pre1, pre2, pre3):
     for item in pre2:
         new_item = re.sub(pattern, r'?\g<1>1', item, count=1)
         prex1.append(new_item)
-  
+    print(prex1)
+    
     sparql_query_template = """
-        PREFIX fam: <http://family.org/>
+        PREFIX ex: <http://family.org/>
         SELECT (xsd:float(?Support))/MAX(?PCA) AS ?modifiedPCA WHERE {
           {
             SELECT (COUNT(DISTINCT *) AS ?Support) WHERE {

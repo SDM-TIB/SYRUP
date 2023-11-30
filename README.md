@@ -48,6 +48,4 @@ python SYRUP.py
 python -m plot_evaluation -e experiments/DBpedia
 ```
 
-The evaluation of SYRUP on 60 SPARQL queries over six different domains of DBpedia suggests that SYRUP improves the answer completeness and correctness by achieving the accuracy from 0.73 to 0.95. Expanding queries by synonym predicates and alternative definitions discovered from association patterns is particularly efficient whenever it is performed with respect to the domains, e.g., Film and Music where predicates have more synonyms.
-
 ![SYRUP evaluation](/images/PrecisionRecallEval.png?raw=true "SYRUP evaluation")

@@ -28,6 +28,7 @@ Configuration for executing
 ```
 
 The proposed approach is a a knowledge graph-agnostic approach. Therefore, apart from DBpedia, other KGs, i.e., ```FrenchRoyalty``` or ```Family``` can be used as the parameter ``KG``.
+```json
 {
  "KG": "Family",
   "endpoint": "https://labs.tib.eu/sdm/family_kg/sparql",
@@ -36,4 +37,4 @@ The proposed approach is a a knowledge graph-agnostic approach. Therefore, apart
   "domain": "Family",
   "query": "Q1"
 }
-
+```

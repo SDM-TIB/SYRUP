@@ -3,4 +3,4 @@
 
 
 
-![SYRUP example](https://raw.githubusercontent.com/SDM-TIB/SYRUP/main/images/MotivatingExample.png "SYRUP example")
+![SYRUP example](https://raw.githubusercontent.com/ProjectsPhD/SYRUP/main/images/MotivatingExample.png "SYRUP example")

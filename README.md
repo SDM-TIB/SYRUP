@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-## Completing Predicates based on Conjunctive Rules in Knowledge Graphs
+## Completing Predicates based on Alignment Rules from Knowledge Graphs
 
-SYRUP is a two-fold approach to detect a minimal number of alternative definitions based on conjunctive rules; it defines a metric to measure whether detected alternative definitions are complementary. These methods are implemented in the engine SYRUP. There are many techniques to detect the unknown positive facts in KGs, including the utilization of embedding-based methods in link prediction. The experimental results depict that detecting alternative definitions based on conjunctive rules are capable of competing with the state-of-the-art embedding-based techniques. To show the effectiveness of SYRUP, the discovered alternative definitions for predicates are used in query expansion to retrieve complete answers. 
+SYRUP is a two-fold approach to detect a minimal number of alternative definitions based on alignment rules; it defines a metric to measure whether detected alternative definitions are complementary. These methods are implemented in the engine SYRUP. There are many techniques to detect the unknown positive facts in KGs, including the utilization of embedding-based methods in link prediction. The experimental results depict that detecting a minimal set of alternative definitions based on alignment rules are capable of competing with the state-of-the-art embedding-based techniques. To show the effectiveness of SYRUP, the discovered alternative definitions for predicates are used in query expansion to retrieve maximum answers. 
 
 ![SYRUP example](/images/MotivatingExample.png?raw=true "SYRUP example")
 
